@@ -9,7 +9,7 @@ import Press from "@/components/home_section/Press";
 
 export default function Home() {
   return (
-    <main className="flex flex-col">
+    <div className="flex flex-col">
       <HomeSection />
       <BusinessVerticals/>
       <Investors />
@@ -17,6 +17,6 @@ export default function Home() {
       <Awards />
       <Press />
       <ContactUs />
-    </main>
+    </div>
   );
 }

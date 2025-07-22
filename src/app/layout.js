@@ -1,5 +1,12 @@
 import Header from "@/components/common/Header";
 import "./globals.css";
+import { Nunito_Sans } from 'next/font/google';
+
+const nunitoSans = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '600', '700'], // add only weights you need
+  display: 'swap',
+});
 
 export const metadata = {
   title: "Create Next App",
@@ -8,7 +15,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={nunitoSans.className}>
       <body
         className={`relative `}
       >

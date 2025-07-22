@@ -19,58 +19,89 @@ const navLinks = [
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("home");
 
-  // Update header background on scroll
+  // 🧼 Remove hash on reload so it doesn't scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (window.location.hash) {
+      history.replaceState(null, "", window.location.pathname);
+    }
   }, []);
 
-  // Detect current visible section
+  // 🧭 Track scroll + active section
   useEffect(() => {
     const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 10);
+
+      const headerHeight = document.getElementById("main-header")?.offsetHeight || 70;
       let currentSection = "";
+
       for (const link of navLinks) {
         const id = link.href.replace("#", "");
         const section = document.getElementById(id);
         if (section) {
-          const { top, height } = section.getBoundingClientRect();
-          if (top <= 80 && top + height > 80) {
+          const offsetTop = section.offsetTop;
+          const offsetHeight = section.offsetHeight;
+
+          if (
+            scrollY >= offsetTop - headerHeight &&
+            scrollY < offsetTop + offsetHeight - headerHeight
+          ) {
             currentSection = id;
             break;
           }
         }
       }
+
       setActiveSection(currentSection);
     };
+
+    // 🟡 Call once on initial mount to apply correct header background
+    handleScroll();
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll to section
+
+  // 🔽 Scroll to section on click (with header offset)
   const handleScrollToSection = (e, href) => {
     e.preventDefault();
     const id = href.replace("#", "");
     const el = document.getElementById(id);
+    const headerHeight = document.getElementById("main-header")?.offsetHeight || 70;
+
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      history.replaceState(null, "", href); // prevent jump on reload
+      const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+
+      history.replaceState(null, "", href);
       setIsMobileMenuOpen(false);
     }
   };
 
   return (
-    <div
-      className={`fixed top-0 z-50 w-full px-6 py-3 flex items-center justify-between transition-colors duration-300
-      ${scrolled ? "bg-white shadow-md" : "bg-transparent lg:bg-white/60"}`}
+    <header
+      id="main-header"
+      className={`fixed top-0 z-50 w-full
+        py-2 sm:py-1 md:py-2 lg:py-[9px] 2xl:py-[11px]
+        px-4 sm:px-2 md:px-4 lg:px-36 2xl:px-[370px]
+        flex items-center justify-between
+        transition-colors duration-300
+        ${scrolled ? "bg-white shadow-md" : "bg-transparent lg:bg-white/60"}
+      `}
     >
       {/* Logo */}
-      <div className="relative w-16 h-8 sm:w-32 sm:h-10 lg:w-36 lg:h-12">
+      <div
+        onClick={(e) => handleScrollToSection(e, "#home")}
+        className="relative w-16 h-8 sm:w-20 sm:h-10 lg:w-30 lg:h-12 2xl:w-26 2xl:h-10 cursor-pointer"
+      >
         <Image
           src="https://goodglamm.com/wp-content/uploads/2022/11/logo2x.png"
           alt="Logo"
@@ -80,14 +111,19 @@ export default function Header() {
         />
       </div>
 
+
       {/* Desktop nav */}
-      <div className="hidden lg:flex space-x-6">
+      <div className="hidden lg:flex mr-14 space-x-6">
         {navLinks.map((link) => (
           <Link
             key={link.label}
             href="#"
             onClick={(e) => handleScrollToSection(e, link.href)}
-            className="text-gray-800 hover:text-blue-600 text-sm font-medium transition cursor-pointer"
+            className={`text-base font-normal cursor-pointer transition 
+              ${activeSection === link.href.replace("#", "")
+                ? "text-black font-semibold"
+                : "text-gray-500 hover:text-black"}
+            `}
           >
             {link.label}
           </Link>
@@ -95,15 +131,15 @@ export default function Header() {
       </div>
 
       {/* Mobile toggle */}
-      <div className="lg:hidden">
+      <div className="lg:hidden h-full flex items-center">
         <button onClick={() => setIsMobileMenuOpen((prev) => !prev)}>
-          {isMobileMenuOpen ? <FiX size={24} /> : <CgMenuRight size={24} />}
+          {isMobileMenuOpen ? <FiX size={24} /> : <CgMenuRight size={33} />}
         </button>
       </div>
 
       {/* Mobile dropdown */}
       {isMobileMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-black shadow-md rounded-b-xl flex flex-col items-center py-4 z-50 lg:hidden">
+        <div className="absolute top-full left-0 w-full bg-black shadow-md flex flex-col items-center py-2 z-50 lg:hidden">
           {navLinks.map((link) => {
             const id = link.href.replace("#", "");
             const isActive = activeSection === id;
@@ -112,8 +148,9 @@ export default function Header() {
                 key={link.label}
                 href="#"
                 onClick={(e) => handleScrollToSection(e, link.href)}
-                className={`py-2 px-4 text-white text-base font-medium w-full text-start cursor-pointer transition 
-                hover:bg-gray-200/50 ${isActive ? "bg-gray-200/50 text-black" : ""}`}
+                className={`py-2 px-8 text-sm w-full text-start cursor-pointer transition 
+                  ${isActive ? "bg-gray-200/20 text-white" : "text-white hover:bg-gray-200/20"}
+                `}
               >
                 {link.label}
               </Link>
@@ -121,6 +158,6 @@ export default function Header() {
           })}
         </div>
       )}
-    </div>
+    </header>
   );
 }
