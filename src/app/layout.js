@@ -1,6 +1,7 @@
 import Header from "@/components/common/Header";
 import "./globals.css";
 import { Nunito_Sans } from 'next/font/google';
+import PageLayoutWithScrollRestore from "@/components/common/PageLayoutWithScrollRestore";
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
@@ -17,14 +18,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={nunitoSans.className}>
       <body
-        className={`relative `}
+        className={`relative`}
       >
+        {/* <PageLayoutWithScrollRestore> */}
         <div className="fixed w-full items-center justify-between left-1/2 transform -translate-x-1/2 z-50">
           <Header />
         </div>
          <main className="mt-0">
           {children}
         </main>
+        {/* </PageLayoutWithScrollRestore> */}
       </body>
     </html>
   );

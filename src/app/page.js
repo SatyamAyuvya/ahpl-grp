@@ -1,3 +1,4 @@
+import SiteFooter from "@/components/common/SiteFooter";
 import Awards from "@/components/home_section/Awards";
 import BusinessVerticals from "@/components/home_section/BusinessVerticals";
 import ContactUs from "@/components/home_section/ContactUs";
@@ -12,11 +13,12 @@ export default function Home() {
     <div className="flex flex-col">
       <HomeSection />
       <BusinessVerticals/>
-      <Investors />
+      {/* <Investors /> */}
       <DoingGood />
       <Awards />
       <Press />
       <ContactUs />
+      <SiteFooter />
     </div>
   );
 }

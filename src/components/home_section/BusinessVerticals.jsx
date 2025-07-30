@@ -13,15 +13,17 @@ export default function BusinessVerticals() {
       className={`
         min-h-screen
         w-full 
-        px-4
+        px-5
         sm:px-6
         md:px-8
-        lg:px-24
-        xl:px-32
-        2xl:px-[360px]
+        xl:px-36
+        2xl:px-[165px]
+        2xlPlus:px-[360px]
 
-        py-10
-        lg:py-[68px]
+        pt-10
+        pb-5
+        lg:pt-[68px]
+        lg:pb-[55px]
       `}
     >
       <FirstSubBrandSection />
@@ -34,9 +36,6 @@ export default function BusinessVerticals() {
       <BrandSectionDivider />
 
       <FourthSubBrandSection />
-      <BrandSectionDivider />
-
-
       
     </div>
   );
